@@ -14,12 +14,14 @@ pub enum B<S, T,> {
 	Y(T,),
 }
 
-impl<S, T,> FromResidual for B<S, T,> {
+impl<S, T, T2,> FromResidual<B<Infallible, T2,>,> for B<S, T,>
+where T: From<T2,>
+{
 	#[track_caller]
-	fn from_residual(residual: <Self as std::ops::Try>::Residual,) -> Self {
+	fn from_residual(residual: B<Infallible, T2,>,) -> Self {
 		match residual {
 			B::X(_i,) => unreachable!(),
-			B::Y(t,) => Self::Y(t,),
+			B::Y(t,) => Self::Y(t.into(),),
 		}
 	}
 }
