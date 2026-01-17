@@ -14,6 +14,16 @@ pub enum B<S, T,> {
 	Y(T,),
 }
 
+impl<S, T,> B<S, T,> {
+	pub fn is_x(&self,) -> bool {
+		matches!(self, B::X(_),)
+	}
+
+	pub fn is_y(&self,) -> bool {
+		!self.is_x()
+	}
+}
+
 impl<S, T, T2,> FromResidual<B<Infallible, T2,>,> for B<S, T,>
 where T: From<T2,>
 {
