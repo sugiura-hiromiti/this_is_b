@@ -1,11 +1,11 @@
+#![cfg_attr(not(feature = "std"), no_std)]
 #![feature(try_trait_v2)]
 #![feature(try_trait_v2_residual)]
 
-use std::{
+use core::{
 	convert::Infallible,
-	fmt::Display,
+	fmt::Debug,
 	ops::{ControlFlow, FromResidual, Residual, Try},
-	process::Termination,
 };
 
 /// b stands for boolish, branch and binary
@@ -36,8 +36,8 @@ where T: From<T2,>
 	}
 }
 
-impl<S, T: From<E,>, E: std::error::Error,> FromResidual<Result<Infallible, E,>,>
-	for B<S, T,>
+impl<S, T: From<E,>, E: core::error::Error,>
+	FromResidual<Result<Infallible, E,>,> for B<S, T,>
 {
 	#[track_caller]
 	fn from_residual(residual: Result<Infallible, E,>,) -> Self {
@@ -56,7 +56,7 @@ impl<S, T,> Try for B<S, T,> {
 		Self::X(output,)
 	}
 
-	fn branch(self,) -> std::ops::ControlFlow<Self::Residual, Self::Output,> {
+	fn branch(self,) -> core::ops::ControlFlow<Self::Residual, Self::Output,> {
 		match self {
 			Self::X(s,) => ControlFlow::Continue(s,),
 			Self::Y(t,) => ControlFlow::Break(B::Y(t,),),
@@ -68,7 +68,8 @@ impl<S, T,> Residual<S,> for B<Infallible, T,> {
 	type TryType = B<S, T,>;
 }
 
-impl<S, T: Display,> Termination for B<S, T,> {
+#[cfg(feature = "std")]
+impl<S, T: std::fmt::Display,> std::process::Termination for B<S, T,> {
 	fn report(self,) -> std::process::ExitCode {
 		match self {
 			Self::X(_,) => std::process::ExitCode::SUCCESS,
@@ -128,7 +129,7 @@ pub trait Container {
 	fn expect_inv(self, msg: &str,) -> Self::E;
 }
 
-impl<T, E: std::fmt::Debug,> Container for B<T, E,> {
+impl<T, E: Debug,> Container for B<T, E,> {
 	type E = E;
 	type T = T;
 
