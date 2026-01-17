@@ -121,11 +121,15 @@ impl<T, E,> ReShape<Option<T,>, (),> for B<T, E,> {
 
 pub trait Container {
 	type T;
+	type E;
 	fn unwrap(self,) -> Self::T;
 	fn expect(self, msg: &str,) -> Self::T;
+	fn unwrap_inv(self,) -> Self::E;
+	fn expect_inv(self, msg: &str,) -> Self::E;
 }
 
 impl<T, E: std::fmt::Debug,> Container for B<T, E,> {
+	type E = E;
 	type T = T;
 
 	fn unwrap(self,) -> Self::T {
@@ -136,5 +140,19 @@ impl<T, E: std::fmt::Debug,> Container for B<T, E,> {
 	fn expect(self, msg: &str,) -> Self::T {
 		let a: Result<_, _,> = self.reshape((),);
 		a.expect(msg,)
+	}
+
+	fn unwrap_inv(self,) -> Self::E {
+		match self {
+			Self::X(_,) => panic!(),
+			Self::Y(s,) => s,
+		}
+	}
+
+	fn expect_inv(self, msg: &str,) -> Self::E {
+		match self {
+			Self::X(_,) => panic!("{msg}"),
+			Self::Y(s,) => s,
+		}
 	}
 }
