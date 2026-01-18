@@ -22,6 +22,13 @@ impl<S, T,> B<S, T,> {
 	pub fn is_y(&self,) -> bool {
 		!self.is_x()
 	}
+
+	pub fn map<X,>(self, f: impl FnOnce(S,) -> X,) -> B<X, T,> {
+		match self {
+			Self::X(s,) => B::X(f(s,),),
+			Self::Y(t,) => B::Y(t,),
+		}
+	}
 }
 
 impl<S, T, T2,> FromResidual<B<Infallible, T2,>,> for B<S, T,>
