@@ -1,6 +1,6 @@
 [package]
 name = "this_is_b"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2024"
 license = "MIT"
 description = "like Either in Haskell"
@@ -8,4 +8,5 @@ description = "like Either in Haskell"
 [dependencies]
 
 [features]
+default = []
 std = []
