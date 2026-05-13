@@ -27,6 +27,22 @@ impl<S, T,> B<S, T,>
 		!self.is_x()
 	}
 
+	pub fn is_x_and(&self, f: impl FnOnce(&S,) -> bool,) -> bool
+	{
+		match self {
+			Self::X(s,) => f(s,),
+			Self::Y(_,) => false,
+		}
+	}
+
+	pub fn is_y_and(&self, f: impl FnOnce(&T,) -> bool,) -> bool
+	{
+		match self {
+			Self::Y(t,) => f(t,),
+			Self::X(_,) => false,
+		}
+	}
+
 	pub fn map<X,>(self, f: impl FnOnce(S,) -> X,) -> B<X, T,>
 	{
 		match self {
