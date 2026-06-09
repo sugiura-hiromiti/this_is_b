@@ -133,13 +133,13 @@ impl<T, E,> ReShape<B<T, E,>, (),> for Result<T, E,>
 	}
 }
 
-impl<T, E: From<C,>, C,> ReShape<B<T, E,>, C,> for Option<T,>
+impl<T, C,> ReShape<B<T, C,>, C,> for Option<T,>
 {
-	fn reshape(self, ctx: C,) -> B<T, E,>
+	fn reshape(self, ctx: C,) -> B<T, C,>
 	{
 		match self {
 			Self::Some(t,) => B::X(t,),
-			Self::None => B::Y(E::from(ctx,),),
+			Self::None => B::Y(ctx,),
 		}
 	}
 }
@@ -154,6 +154,7 @@ impl<T, E,> ReShape<Result<T, E,>, (),> for B<T, E,>
 		}
 	}
 }
+
 impl<T, E,> ReShape<Option<T,>, (),> for B<T, E,>
 {
 	fn reshape(self, _ctx: (),) -> Option<T,>
