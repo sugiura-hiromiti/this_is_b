@@ -9,6 +9,7 @@ use core::{
 };
 
 /// b stands for boolish, branch and binary
+#[must_use]
 pub enum B<S, T,>
 {
 	X(S,),
