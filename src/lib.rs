@@ -1,6 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![feature(try_trait_v2)]
-#![feature(try_trait_v2_residual)]
+#![feature(try_trait_v2, try_trait_v2_residual, const_trait_impl)]
 
 use core::{
 	convert::Infallible,
@@ -207,6 +206,48 @@ impl<T, E: Debug,> Container for B<T, E,>
 		match self {
 			Self::X(_,) => panic!("{msg}"),
 			Self::Y(s,) => s,
+		}
+	}
+}
+
+pub const trait ConstContainer
+{
+	type T;
+	type E;
+	fn const_unwrap(self,) -> Self::T;
+	fn const_expect(self, msg: &str,) -> Self::T;
+	fn const_unwrap_inv(self,) -> Self::E;
+	fn const_expect_inv(self, msg: &str,) -> Self::E;
+}
+
+impl<T, E: Debug,> ConstContainer for B<T, E,>
+{
+	type E = E;
+	type T = T;
+
+	fn const_unwrap(self,) -> Self::T
+	{
+		self.const_expect("",)
+	}
+
+	fn const_expect(self, msg: &str,) -> Self::T
+	{
+		match self {
+			Self::X(t,) => t,
+			Self::Y(e,) => panic!("{msg} {e:?}"),
+		}
+	}
+
+	fn const_unwrap_inv(self,) -> Self::E
+	{
+		self.const_expect_inv("",)
+	}
+
+	fn const_expect_inv(self, msg: &str,) -> Self::E
+	{
+		match self {
+			Self::X(_,) => panic!("{msg}"),
+			Self::Y(e,) => e,
 		}
 	}
 }
