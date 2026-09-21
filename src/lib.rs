@@ -1,5 +1,12 @@
 #![cfg_attr(not(feature = "std"), no_std)]
-#![feature(try_trait_v2, try_trait_v2_residual, const_trait_impl)]
+#![feature(
+	try_trait_v2,
+	try_trait_v2_residual,
+	const_trait_impl,
+	const_try,
+	const_try_residual,
+	const_convert
+)]
 
 use core::{
 	convert::Infallible,
@@ -52,8 +59,8 @@ impl<S, T,> B<S, T,>
 	}
 }
 
-impl<S, T, T2,> FromResidual<B<Infallible, T2,>,> for B<S, T,>
-where T: From<T2,>
+const impl<S, T, T2,> FromResidual<B<Infallible, T2,>,> for B<S, T,>
+where T: const From<T2,>
 {
 	#[track_caller]
 	fn from_residual(residual: B<Infallible, T2,>,) -> Self
