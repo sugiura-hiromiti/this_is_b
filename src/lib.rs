@@ -5,6 +5,7 @@
 	const_trait_impl,
 	const_try,
 	const_try_residual,
+	const_precise_live_drops,
 	const_convert
 )]
 
@@ -72,7 +73,7 @@ where T: const From<T2,>
 	}
 }
 
-impl<S, T: From<E,>, E: core::error::Error,>
+const impl<S, T: const From<E,>, E: core::error::Error,>
 	FromResidual<Result<Infallible, E,>,> for B<S, T,>
 {
 	#[track_caller]
@@ -85,7 +86,7 @@ impl<S, T: From<E,>, E: core::error::Error,>
 	}
 }
 
-impl<S, T,> Try for B<S, T,>
+const impl<S, T,> Try for B<S, T,>
 {
 	type Output = S;
 	type Residual = B<Infallible, T,>;
@@ -104,7 +105,7 @@ impl<S, T,> Try for B<S, T,>
 	}
 }
 
-impl<S, T,> Residual<S,> for B<Infallible, T,>
+const impl<S, T,> Residual<S,> for B<Infallible, T,>
 {
 	type TryType = B<S, T,>;
 }
