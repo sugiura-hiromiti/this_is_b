@@ -223,39 +223,61 @@ pub const trait ConstContainer
 	type T;
 	type E;
 	fn const_unwrap(self,) -> Self::T;
-	fn const_expect(self, msg: &str,) -> Self::T;
 	fn const_unwrap_inv(self,) -> Self::E;
-	fn const_expect_inv(self, msg: &str,) -> Self::E;
 }
 
-impl<T, E: Debug,> ConstContainer for B<T, E,>
+const impl<T, E: Debug,> ConstContainer for B<T, E,>
 {
 	type E = E;
 	type T = T;
 
 	fn const_unwrap(self,) -> Self::T
 	{
-		self.const_expect("",)
-	}
-
-	fn const_expect(self, msg: &str,) -> Self::T
-	{
 		match self {
 			Self::X(t,) => t,
-			Self::Y(e,) => panic!("{msg} {e:?}"),
+			Self::Y(_e,) => panic!(),
 		}
 	}
 
 	fn const_unwrap_inv(self,) -> Self::E
 	{
-		self.const_expect_inv("",)
-	}
-
-	fn const_expect_inv(self, msg: &str,) -> Self::E
-	{
 		match self {
-			Self::X(_,) => panic!("{msg}"),
+			Self::X(_t,) => panic!(),
 			Self::Y(e,) => e,
 		}
+	}
+}
+
+#[cfg(test)]
+mod tests
+{
+	use super::*;
+
+	const fn monad_add_one(x: B<i32, i32,>,) -> B<i32, i32,>
+	{
+		let x = x?;
+		B::X(x + 1,)
+	}
+	const X: B<i32, i32,> = monad_add_one(B::X(1,),);
+	const Y: B<i32, i32,> = monad_add_one(B::Y(1,),);
+
+	#[test]
+	fn question_syntax_work()
+	{
+		let x = question_syntax_work_inner().unwrap();
+		assert_eq!(x, 0);
+	}
+
+	const fn question_syntax_work_inner() -> B<i32, i32,>
+	{
+		let x = X?;
+		let y = Y.const_unwrap_inv();
+		if x != 2 {
+			panic!()
+		}
+		if y != 1 {
+			panic!()
+		}
+		B::X(0,)
 	}
 }
